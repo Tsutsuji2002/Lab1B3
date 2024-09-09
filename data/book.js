@@ -1,0 +1,42 @@
+export const books = [
+  {
+    id: 1,
+    title: 'Tắt Đèn',
+    author: 'Ngô Tất Tố',
+    price: 50.000,
+    image: require('../assets/Tat_den.jpg'),
+    description: 'Một câu chuyện về cuộc sống khổ cực của người nông dân Việt Nam dưới thời thực dân phong kiến.',
+  },
+  {
+    id: 2,
+    title: 'Dế Mèn Phiêu Lưu Ký',
+    author: 'Tô Hoài',
+    price: 70.000,
+    image: require('../assets/De-men-phieu-luu-kyn.jpg'),
+    description: 'Câu chuyện phiêu lưu của chú dế mèn qua nhiều vùng đất và gặp gỡ nhiều loài vật khác nhau.',
+  },
+  {
+    id: 3,
+    title: 'Nhật Ký Trong Tù',
+    author: 'Hồ Chí Minh',
+    price: 99.000,
+    image: require('../assets/Nhat-ky-trong-tu.jpg'),
+    description: 'Những bài thơ được viết trong thời gian Chủ tịch Hồ Chí Minh bị giam giữ tại Trung Quốc.',
+  },
+  {
+    id: 4,
+    title: 'Vợ Nhặt',
+    author: 'Kim Lân',
+    price: 69.000,
+    image: require('../assets/25219515.jpg'),
+    description: 'Truyện ngắn về cảnh đói khổ của người dân Việt Nam trong nạn đói năm 1945 và câu chuyện tình yêu giản dị.',
+  },
+  {
+    id: 5,
+    title: 'Chí Phèo',
+    author: 'Nam Cao',
+    price: 79.000,
+    image: require('../assets/Chi-pheo.jpg'),
+    description: 'Một tác phẩm về cuộc đời đầy bi kịch của Chí Phèo, người nông dân bị xã hội đẩy vào con đường tha hóa.',
+  },
+];
