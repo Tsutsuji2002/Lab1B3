@@ -9,34 +9,37 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  useWindowDimensions,
-  Keyboard
+  Dimensions,
+  Keyboard,
 } from 'react-native';
 
 const BookDetails = ({ route, navigation }) => {
   const { book } = route.params;
-  const { width, height } = useWindowDimensions();
-  const [orientation, setOrientation] = useState(width > height ? 'landscape' : 'portrait');
+  const [dimensions, setDimensions] = useState(Dimensions.get('window'));
+  const [orientation, setOrientation] = useState(
+    dimensions.width > dimensions.height ? 'landscape' : 'portrait'
+  );
   const [comment, setComment] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    const updateOrientation = () => {
-      const newOrientation = width > height ? 'landscape' : 'portrait';
-      setOrientation(newOrientation);
+    const updateDimensions = ({ window }) => {
+      setDimensions(window);
+      setOrientation(window.width > window.height ? 'landscape' : 'portrait');
     };
 
-    updateOrientation();
+    const dimensionsSubscription = Dimensions.addEventListener('change', updateDimensions);
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
 
     return () => {
+      dimensionsSubscription.remove();
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, [width, height]);
+  }, []);
 
-  const imageWidth = orientation === 'landscape' ? width * 0.4 : width * 0.8;
+  const imageWidth = orientation === 'landscape' ? dimensions.width * 0.3 : dimensions.width * 0.6;
   const imageHeight = imageWidth * 1.5;
 
   return (
@@ -47,18 +50,28 @@ const BookDetails = ({ route, navigation }) => {
     >
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={[styles.content, orientation === 'landscape' && styles.landscapeContent]}>
-          <Image source={ book.image } style={[styles.image, { width: imageWidth, height: imageHeight }]} />
+          <View style={styles.imageContainer}>
+            <Image source={book.image} style={[styles.image, { width: imageWidth, height: imageHeight }]} />
+          </View>
           <View style={styles.details}>
             <Text style={styles.title}>{book.title}</Text>
             <Text style={styles.author}>{book.author}</Text>
             <Text style={styles.price}>{book.price.toFixed(3)} đ</Text>
             <Text style={styles.description}>{book.description}</Text>
-            <TouchableOpacity
-              style={[styles.button, orientation === 'landscape' && styles.landscapeButton]}
-              onPress={() => navigation.navigate('Cart')}
-            >
-              <Text style={styles.buttonText}>Thêm vào giỏ hàng</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.addToCartButton]}
+                onPress={() => navigation.navigate('Cart')}
+              >
+                <Text style={styles.buttonText}>Thêm vào giỏ hàng</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.buyNowButton]}
+                onPress={() => {/* Handle buy now */}}
+              >
+                <Text style={styles.buttonText}>Mua ngay</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
         <View style={[styles.commentSection, keyboardVisible && styles.commentSectionWithKeyboard]}>
@@ -78,25 +91,28 @@ const BookDetails = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   scrollViewContent: {
     flexGrow: 1,
   },
   content: {
-    alignItems: 'center',
     padding: 20,
   },
   landscapeContent: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   image: {
     resizeMode: 'contain',
-    marginBottom: 20,
   },
   details: {
-    alignItems: 'center',
     flex: 1,
+    marginLeft: 20,
   },
   title: {
     fontSize: 24,
@@ -116,29 +132,36 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    textAlign: 'center',
     marginBottom: 20,
+    lineHeight: 24,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   button: {
-    backgroundColor: '#007AFF',
+    flex: 1,
     padding: 15,
     borderRadius: 5,
-    width: '100%',
+    alignItems: 'center',
   },
-  landscapeButton: {
-    width: '50%',
+  addToCartButton: {
+    backgroundColor: '#007AFF',
+    marginRight: 10,
+  },
+  buyNowButton: {
+    backgroundColor: '#34C759',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
   commentSection: {
     padding: 20,
   },
   commentSectionWithKeyboard: {
-    marginBottom: 250, // Điều chỉnh giá trị này tùy thuộc vào kích thước bàn phím
+    marginBottom: 250,
   },
   input: {
     borderWidth: 1,
@@ -147,6 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 100,
     textAlignVertical: 'top',
+    backgroundColor: '#ffffff',
   },
 });
 
