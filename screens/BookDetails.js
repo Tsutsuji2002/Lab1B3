@@ -11,6 +11,7 @@ import {
   Platform,
   Dimensions,
   Keyboard,
+  StatusBar,
 } from 'react-native';
 
 const BookDetails = ({ route, navigation }) => {
@@ -32,12 +33,22 @@ const BookDetails = ({ route, navigation }) => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
 
+    StatusBar.setBarStyle(orientation === 'portrait' ? 'dark-content' : 'light-content');
+    if (Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(orientation === 'portrait' ? '#ffffff' : '#000000');
+    }
+
     return () => {
       dimensionsSubscription.remove();
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
+      StatusBar.setBarStyle('dark-content');
+      if (Platform.OS === 'android') {
+        StatusBar.setBackgroundColor('#ffffff');
+      }
     };
-  }, []);
+  }, [orientation]);
+
 
   const imageWidth = orientation === 'landscape' ? dimensions.width * 0.3 : dimensions.width * 0.6;
   const imageHeight = imageWidth * 1.5;
@@ -45,7 +56,7 @@ const BookDetails = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: orientation === 'portrait' ? '#f5f5f5' : '#000000' }]}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -67,7 +78,7 @@ const BookDetails = ({ route, navigation }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.buyNowButton]}
-                onPress={() => {/* Handle buy now */}}
+                onPress={() => {}}
               >
                 <Text style={styles.buttonText}>Mua ngay</Text>
               </TouchableOpacity>
